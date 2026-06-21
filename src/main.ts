@@ -30,7 +30,7 @@ window.addEventListener("resize", () => {
 new OrbitControls(camera, renderer.domElement);
 
 const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshNormalMaterial({ wireframe: true });
+const material = new THREE.MeshNormalMaterial({});
 
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
@@ -53,8 +53,8 @@ cameraFolder.open();
 function animate() {
   requestAnimationFrame(animate);
 
-  //cube.rotation.x += 0.01
-  //cube.rotation.y += 0.01
+  cube.rotation.x += 0.01;
+  cube.rotation.y += 0.01;
 
   renderer.render(scene, camera);
 
