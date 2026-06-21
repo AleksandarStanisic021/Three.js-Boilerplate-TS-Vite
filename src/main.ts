@@ -27,7 +27,7 @@ window.addEventListener("resize", function () {
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
-const material = new THREE.NodeMaterial();
+let material = new THREE.NodeMaterial();
 material.fragmentNode = color("crimson");
 
 const mesh = new THREE.Mesh(new THREE.PlaneGeometry(), material);
