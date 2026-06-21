@@ -5,7 +5,9 @@ import Stats from "three/addons/libs/stats.module.js";
 import { GUI } from "dat.gui";
 
 const scene = new THREE.Scene();
+
 //test scene
+//other test
 
 const camera = new THREE.PerspectiveCamera(
   75,
