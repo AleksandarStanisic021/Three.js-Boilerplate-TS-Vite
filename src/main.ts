@@ -13,7 +13,9 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.z = 1;
 
-const renderer = new THREE.WebGPURenderer();
+const renderer = new THREE.WebGPURenderer({
+  antialias: true,
+});
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 renderer.setAnimationLoop(animate);
