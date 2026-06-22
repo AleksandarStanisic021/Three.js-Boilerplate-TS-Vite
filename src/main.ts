@@ -29,6 +29,7 @@ controls.enableDamping = true;
 
 let material = new THREE.NodeMaterial();
 material.fragmentNode = color("crimson");
+//test
 
 const mesh = new THREE.Mesh(new THREE.PlaneGeometry(), material);
 scene.add(mesh);
