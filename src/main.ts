@@ -1,6 +1,6 @@
 import "./style.css";
 import * as THREE from "three/webgpu";
-import { color } from "three/tsl";
+import { color, texture, convertColorSpace } from "three/tsl";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 const scene = new THREE.Scene();
@@ -30,8 +30,12 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
 let material = new THREE.NodeMaterial();
-material.fragmentNode = color("crimson");
-//test
+//material.fragmentNode = color("crimson");
+material.fragmentNode = convertColorSpace(
+  texture(new THREE.TextureLoader().load("https://sbcode.net/img/grid.png")),
+  THREE.SRGBColorSpace,
+  THREE.LinearSRGBColorSpace,
+);
 
 const mesh = new THREE.Mesh(new THREE.PlaneGeometry(), material);
 scene.add(mesh);
