@@ -28,7 +28,7 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
 const material = new THREE.NodeMaterial();
-material.fragmentNode = positionLocal.mul(4.9999).fract().step(0.5);
+material.fragmentNode = positionLocal.length().mul(15).fract().step(0.5);
 
 const mesh = new THREE.Mesh(new THREE.BoxGeometry(), material);
 scene.add(mesh);
