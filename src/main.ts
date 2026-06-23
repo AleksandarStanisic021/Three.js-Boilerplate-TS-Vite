@@ -1,6 +1,17 @@
 import "./style.css";
 import * as THREE from "three/webgpu";
-import { Fn, positionLocal } from "three/tsl";
+import {
+  Fn,
+  positionLocal,
+  vec3,
+  rotateUV,
+  time,
+  vec2,
+  length,
+  atan,
+  sin,
+  cos,
+} from "three/tsl";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 const scene = new THREE.Scene();
@@ -27,8 +38,22 @@ window.addEventListener("resize", function () {
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
+const main = Fn(() => {
+  const p = positionLocal.toVar();
+
+  p.assign(rotateUV(p.xy, time, vec2()));
+
+  p.assign(length(p.mul(5)).sub(atan(p.zy, p.zx)).mul(5));
+  p.sinAssign();
+  p.mulAssign(5);
+
+  p.assign(vec3(p.x.add(sin(time).mul(5)), p.y.add(cos(time).mul(5)), 0));
+
+  return p;
+});
+
 const material = new THREE.NodeMaterial();
-material.fragmentNode = positionLocal.length().mul(15).fract().step(0.5);
+material.fragmentNode = main();
 
 const mesh = new THREE.Mesh(new THREE.BoxGeometry(), material);
 scene.add(mesh);
