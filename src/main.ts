@@ -32,11 +32,11 @@ const main = Fn(() => {
 
   p.assign(rotateUV(p.xy, time, vec2())); // rotate
 
-  If(abs(p.x).greaterThan(0.45), () => {
+  If(abs(p.x).lessThan(0.45), () => {
     // @ts-ignore
     p.z = 1;
   });
-  If(abs(p.y).greaterThan(0.45), () => {
+  If(abs(p.y).lessThan(0.45), () => {
     // @ts-ignore
     p.z = 1;
   });
@@ -46,7 +46,7 @@ const main = Fn(() => {
 const material = new THREE.NodeMaterial();
 material.fragmentNode = main();
 
-const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
+const mesh = new THREE.Mesh(new THREE.SphereGeometry(), material);
 scene.add(mesh);
 
 renderer.debug.getShaderAsync(scene, camera, mesh).then((e) => {
