@@ -55,7 +55,7 @@ const main = Fn(() => {
 const material = new THREE.NodeMaterial();
 material.fragmentNode = main();
 
-const mesh = new THREE.Mesh(new THREE.BoxGeometry(), material);
+const mesh = new THREE.Mesh(new THREE.PlaneGeometry(), material);
 scene.add(mesh);
 
 // renderer.debug.getShaderAsync(scene, camera, mesh).then((e) => {
