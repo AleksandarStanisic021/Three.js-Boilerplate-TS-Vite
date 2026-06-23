@@ -27,15 +27,8 @@ window.addEventListener("resize", function () {
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
-const main = Fn(() => {
-  const p = positionLocal.toVar();
-
-  return p;
-});
-
 const material = new THREE.NodeMaterial();
-//material.fragmentNode = main()
-material.fragmentNode = positionLocal;
+material.fragmentNode = positionLocal.mul(4.9999).fract().step(0.5);
 
 const mesh = new THREE.Mesh(new THREE.BoxGeometry(), material);
 scene.add(mesh);
