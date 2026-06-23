@@ -13,23 +13,7 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.z = 1;
 
-const main = Fn(() => {
-  const p = positionLocal.toVar();
-
-  If(abs(p.x).greaterThan(0.45), () => {
-    // @ts-ignore
-    p.z = 1;
-  });
-  If(abs(p.y).greaterThan(0.45), () => {
-    // @ts-ignore
-    p.z = 1;
-  });
-  return p;
-});
-
-const renderer = new THREE.WebGPURenderer({
-  antialias: true,
-});
+const renderer = new THREE.WebGPURenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 renderer.setAnimationLoop(animate);
@@ -43,11 +27,34 @@ window.addEventListener("resize", function () {
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
+const main = Fn(() => {
+  const p = positionLocal.toVar();
+
+  p.assign(rotateUV(p.xy, time, vec2())); // rotate
+
+  If(abs(p.x).greaterThan(0.45), () => {
+    // @ts-ignore
+    p.z = 1;
+  });
+  If(abs(p.y).greaterThan(0.45), () => {
+    // @ts-ignore
+    p.z = 1;
+  });
+  return p;
+});
+
 const material = new THREE.NodeMaterial();
 material.fragmentNode = main();
 
-const mesh = new THREE.Mesh(new THREE.PlaneGeometry(), material);
+const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
 scene.add(mesh);
+
+renderer.debug.getShaderAsync(scene, camera, mesh).then((e) => {
+  //console.log(e.vertexShader)
+  console.log(e.fragmentShader);
+});
+
+// scene.backgroundNode = main()
 
 function animate() {
   controls.update();
