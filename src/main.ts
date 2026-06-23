@@ -1,31 +1,25 @@
 import "./style.css";
 import * as THREE from "three/webgpu";
 import {
-  abs,
-  clamp,
-  cos,
-  dot,
+  positionLocal,
   Fn,
   length,
-  max,
-  mix,
-  mod,
-  negate,
-  oneMinus,
-  positionLocal,
   sin,
-  smoothstep,
-  step,
   time,
-  vec2,
   vec3,
+  pow,
+  float,
+  fract,
+  max,
+  abs,
 } from "three/tsl";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(
-  75,
+  53,
   window.innerWidth / window.innerHeight,
   0.1,
   10,
@@ -44,57 +38,46 @@ window.addEventListener("resize", function () {
 });
 
 const controls = new OrbitControls(camera, renderer.domElement);
+//controls.target.set(1, -1, 0)
 controls.enableDamping = true;
 
-const Line = Fn(
-  ([position, direction, distance, thickness]: [any, any, any, any]) => {
-    const projection = dot(position, direction); // scalar projection
-    const clampedProjection = clamp(projection, 0.0, distance);
-    const line = smoothstep(
-      thickness,
-      0.0,
-      length(position.sub(clampedProjection.mul(direction))),
-    );
-    return line;
-  },
-);
+// const options = {
+//   radius: 0.1,
+// }
 
-const Circle = Fn(([position, radius, thickness]: [any, any, any]) => {
-  const distance = length(position).sub(radius);
-  return smoothstep(thickness, 0, abs(distance));
-});
+// const radius = uniform(options.radius)
 
 const main = Fn(() => {
   const p = positionLocal.toVar();
-  p.mulAssign(2);
 
-  const radius = 0.5;
-  const thickness = 0.01;
+  p.mulAssign(5);
 
-  const circleOffset = vec2(-0.66, 0.66);
-  const circle = Circle(p.sub(circleOffset), radius, thickness);
+  const radius = float(0.1);
+  const intensity = 2;
 
-  const angle = time;
-  const direction = vec2(cos(angle), sin(angle));
+  const colours = [
+    vec3(1.0, 0.05, 0.3),
+    vec3(0.1, 0.4, 1.0),
+    vec3(0.2, 1, 0.2),
+  ];
 
-  const radiusLine = Line(p.sub(circleOffset), direction, radius, thickness);
-  //const radiusEndPosition = direction.mul(radius)
+  const finalColour = vec3().toVar();
 
-  //const frequency = Math.PI * 2
+  for (let i = 0; i < 3; i++) {
+    p.mulAssign(sin(i).add(0.5));
 
-  //const sineWave = p.y
-  //const sineWave = p.y.sub(sin(p.x))
-  //const sineWave = abs(p.y.sub(sin(p.x)))
-  //const sineWave = smoothstep(thickness, 0, abs(p.y.sub(sin(p.x))))
-  //const sineWave = smoothstep(thickness, 0, abs(p.y.sub(sin(p.x.mul(frequency))))) // add some frequency to shrink it on p.x
-  //const sineWave = smoothstep(thickness, 0, abs(p.y.sub(sin(p.x.mul(frequency)).mul(0.5)))) // halve the height
-  //const sineWave = smoothstep(thickness, 0, abs(p.y.sub(circleOffset.y).sub(sin(p.x.mul(frequency)).mul(0.5))))
-  //const sineWave = smoothstep(thickness, 0, abs(p.y.sub(circleOffset.y).sub(sin(p.x.mul(frequency).sub(time)).mul(0.5))))  // add time
-  //const sineWave = smoothstep(thickness, 0, abs(p.y.sub(circleOffset.y).sub(sin(p.x.mul(frequency).sub(time).sub(Math.PI)).mul(0.5)))) // offset it
-  //sineWave.assign(step(0.01, p.x).mul(sineWave)) // draw only part of it right of p.x = 0.01
+    p.assign(fract(p).sub(0.5));
 
-  const finalColour = mix(circle, vec3(1, 0, 0), radiusLine);
-  //finalColour.assign(mix(finalColour, vec3(0, 1, 0), sineWave))
+    const distance = length(p);
+
+    distance.assign(sin(distance.mul(10).sub(time)));
+    distance.assign(abs(distance));
+
+    // glow equation = pow(radius/distance), intensity)
+    distance.assign(pow(radius.div(distance), intensity));
+
+    finalColour.assign(max(finalColour, colours[i].mul(distance)));
+  }
 
   return finalColour;
 });
@@ -102,12 +85,14 @@ const main = Fn(() => {
 const material = new THREE.NodeMaterial();
 material.fragmentNode = main();
 
-const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), material);
+const mesh = new THREE.Mesh(new THREE.PlaneGeometry(), material);
 scene.add(mesh);
 
-// renderer.debug.getShaderAsync(scene, camera, mesh).then((e) => {
-//   //console.log(e.vertexShader)
-//   console.log(e.fragmentShader)
+//scene.backgroundNode = main()
+
+const gui = new GUI();
+// gui.add(options, 'radius', 0, 1, 0.01).onChange((v) => {
+//   radius.value = v
 // })
 
 function animate() {
