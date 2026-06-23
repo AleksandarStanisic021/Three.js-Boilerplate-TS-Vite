@@ -1,6 +1,6 @@
 import "./style.css";
 import * as THREE from "three/webgpu";
-import { abs, Fn, If, positionLocal, rotateUV, time, vec2 } from "three/tsl";
+import { Fn, positionLocal } from "three/tsl";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 const scene = new THREE.Scene();
@@ -30,31 +30,20 @@ controls.enableDamping = true;
 const main = Fn(() => {
   const p = positionLocal.toVar();
 
-  p.assign(rotateUV(p.xy, time, vec2())); // rotate
-
-  If(abs(p.x).lessThan(0.45), () => {
-    // @ts-ignore
-    p.z = 1;
-  });
-  If(abs(p.y).lessThan(0.45), () => {
-    // @ts-ignore
-    p.z = 1;
-  });
   return p;
 });
 
 const material = new THREE.NodeMaterial();
-material.fragmentNode = main();
+//material.fragmentNode = main()
+material.fragmentNode = positionLocal;
 
-const mesh = new THREE.Mesh(new THREE.SphereGeometry(), material);
+const mesh = new THREE.Mesh(new THREE.BoxGeometry(), material);
 scene.add(mesh);
 
-renderer.debug.getShaderAsync(scene, camera, mesh).then((e) => {
-  //console.log(e.vertexShader)
-  console.log(e.fragmentShader);
-});
-
-// scene.backgroundNode = main()
+// renderer.debug.getShaderAsync(scene, camera, mesh).then((e) => {
+//   //console.log(e.vertexShader)
+//   console.log(e.fragmentShader)
+// })
 
 function animate() {
   controls.update();
