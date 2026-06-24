@@ -1,6 +1,6 @@
 import "./style.css";
 import * as THREE from "three/webgpu";
-import { positionLocal } from "three/tsl";
+import { color } from "three/tsl";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 const scene = new THREE.Scene();
@@ -28,21 +28,10 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 
 const material = new THREE.NodeMaterial();
-// material.fragmentNode = color('crimson')
-// material.fragmentNode = convertColorSpace(
-//   texture(new THREE.TextureLoader().load('https://sbcode.net/img/grid.png')),
-//   THREE.SRGBColorSpace,
-//   THREE.LinearSRGBColorSpace
-// )
-material.fragmentNode = positionLocal;
+material.fragmentNode = color("blue");
 
-const mesh = new THREE.Mesh(new THREE.PlaneGeometry(), material);
+const mesh = new THREE.Mesh(new THREE.BoxGeometry(), material);
 scene.add(mesh);
-
-renderer.debug.getShaderAsync(scene, camera, mesh).then((e) => {
-  //console.log(e.vertexShader)
-  console.log(e.fragmentShader);
-});
 
 function animate() {
   controls.update();
