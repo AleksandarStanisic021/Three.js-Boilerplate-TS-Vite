@@ -1,6 +1,6 @@
 import "./style.css";
 import * as THREE from "three/webgpu";
-import { positionLocal } from "three/tsl";
+//import { positionLocal } from "three/tsl";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { color } from "three/src/nodes/TSL.js";
 
