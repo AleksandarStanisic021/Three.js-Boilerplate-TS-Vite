@@ -30,7 +30,7 @@ controls.enableDamping = true;
 const material = new THREE.NodeMaterial();
 material.fragmentNode = color("blue");
 
-const mesh = new THREE.Mesh(new THREE.PlaneGeometry(), material);
+const mesh = new THREE.Mesh(new THREE.BoxGeometry(), material);
 scene.add(mesh);
 
 function animate() {
